@@ -131,4 +131,22 @@ public class VegetableService {
             throw new RuntimeException(e);
         }
     }
+
+    public List<Vegetable> getForFarmer(String authHeader) {
+        try{
+            String token = authHeader.substring(7);
+
+            String userId = jwtUtil.extractUserId(token);
+
+            boolean exist = vegetableRepository.existsByFarmerId(userId);
+
+            if(!exist)
+                throw new RuntimeException("No vegetables found for this farmer.");
+
+            return vegetableRepository.findByFarmerId(userId);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

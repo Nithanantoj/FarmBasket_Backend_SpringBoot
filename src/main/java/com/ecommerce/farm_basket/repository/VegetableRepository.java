@@ -7,4 +7,8 @@ import java.util.List;
 
 public interface VegetableRepository extends MongoRepository<Vegetable, String> {
     List<Vegetable> findByFarmerIdIn(List<String> farmerIds);
+
+    boolean existsByFarmerId(String userId);
+
+    List<Vegetable> findByFarmerId(String userId);
 }

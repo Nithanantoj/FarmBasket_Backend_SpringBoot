@@ -33,4 +33,9 @@ public class VegetableController {
     public String delete(@PathVariable String id, @RequestHeader("Authorization") String authHeader){
         return vegetableService.deleteVegetable(id, authHeader);
     }
+
+    @GetMapping("/farmer/get")
+    public List<Vegetable> getForFarmer(@RequestHeader("Authorization") String authHeader){
+        return vegetableService.getForFarmer(authHeader);
+    }
 }
