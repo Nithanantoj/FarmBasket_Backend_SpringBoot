@@ -28,7 +28,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         // Convert your custom User to Spring Security's User
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
-                user.getPassword(),
+                "",
                 Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole()))
         );
     }
