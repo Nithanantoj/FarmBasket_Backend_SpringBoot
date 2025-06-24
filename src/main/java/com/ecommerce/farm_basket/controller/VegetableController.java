@@ -4,6 +4,7 @@ import com.ecommerce.farm_basket.entity.Vegetable;
 import com.ecommerce.farm_basket.service.VegetableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -15,8 +16,12 @@ public class VegetableController {
     VegetableService vegetableService;
 
     @PostMapping("/farmer/add")
-    public Vegetable add(@RequestBody Vegetable vegetable, @RequestHeader("Authorization") String authHeader){
-        return vegetableService.addVegetable(vegetable, authHeader);
+    public Vegetable add( @RequestParam("name") String name,
+                          @RequestParam("pricePerHalfKg") Double pricePerHalfKg,
+                          @RequestParam("availableQuantityKg") Double availableQuantityKg,
+                          @RequestParam("image") MultipartFile image,
+                          @RequestHeader("Authorization") String authHeader){
+        return vegetableService.addVegetable(name, pricePerHalfKg, availableQuantityKg, image, authHeader);
     }
 
     @GetMapping("/get")

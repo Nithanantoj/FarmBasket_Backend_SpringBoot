@@ -9,6 +9,7 @@ import com.ecommerce.farm_basket.repository.VegetableRepository;
 import com.ecommerce.farm_basket.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,9 +26,13 @@ public class VegetableService {
     @Autowired
     JwtUtil jwtUtil;
 
+    @Autowired
+    S3Service s3Service;
 
-    public Vegetable addVegetable(Vegetable vegetable, String authHeader) {
-        try{
+
+    public Vegetable addVegetable(String name, Double pricePerHalfKg, Double availableQuantityKg,
+                                  MultipartFile image, String authHeader) {
+        try {
 
             String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
 
@@ -37,21 +42,29 @@ public class VegetableService {
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new UserNotFoundException("User is Not Found0"));
 
+            String imageUrl = s3Service.uploadFile(image);
+
+            Vegetable vegetable = new Vegetable();
+            vegetable.setName(name);
+            vegetable.setPricePerHalfKg(pricePerHalfKg);
+            vegetable.setAvailableQuantityKg(availableQuantityKg);
+            vegetable.setFarmerId(userId);
+            vegetable.setImageUrl(imageUrl);
+
 
             vegetable.setFarmerId(userId);
 
             return vegetableRepository.save(vegetable);
 
 
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Failed to add vegetable: " + e.getMessage());
         }
     }
 
     public List<Vegetable> getVegetables(String authHeader) {
-        try{
+        try {
 
             String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
 
@@ -85,7 +98,7 @@ public class VegetableService {
     }
 
     public Vegetable updateVegetables(String id, Vegetable vegetable, String authHeader) {
-        try{
+        try {
             String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
 
             String userId = jwtUtil.extractUserId(token);
@@ -93,17 +106,17 @@ public class VegetableService {
             Vegetable existingVeg = vegetableRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Vegetable not found"));
 
-            if(!existingVeg.getFarmerId().equals(userId))
+            if (!existingVeg.getFarmerId().equals(userId))
                 throw new RuntimeException("Unauthorized: You can update only your own vegetables");
 
-            if(vegetable.getName() != null)
-            existingVeg.setName(vegetable.getName());
+            if (vegetable.getName() != null)
+                existingVeg.setName(vegetable.getName());
 
-            if(vegetable.getAvailableQuantityKg() != null)
-            existingVeg.setAvailableQuantityKg(vegetable.getAvailableQuantityKg());
+            if (vegetable.getAvailableQuantityKg() != null)
+                existingVeg.setAvailableQuantityKg(vegetable.getAvailableQuantityKg());
 
-            if(vegetable.getPricePerHalfKg() != null)
-            existingVeg.setPricePerHalfKg(vegetable.getPricePerHalfKg());
+            if (vegetable.getPricePerHalfKg() != null)
+                existingVeg.setPricePerHalfKg(vegetable.getPricePerHalfKg());
 
             return vegetableRepository.save(existingVeg);
 
@@ -113,7 +126,7 @@ public class VegetableService {
     }
 
     public String deleteVegetable(String id, String authHeader) {
-        try{
+        try {
             String token = authHeader.substring(7);
 
             String userId = jwtUtil.extractUserId(token);
@@ -121,7 +134,7 @@ public class VegetableService {
             Vegetable vegetable = vegetableRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Vegetable not found with ID: " + id));
 
-            if(!vegetable.getFarmerId().equals(userId)){
+            if (!vegetable.getFarmerId().equals(userId)) {
                 throw new RuntimeException("You are not authorized to delete this vegetable.");
             }
 
@@ -133,14 +146,14 @@ public class VegetableService {
     }
 
     public List<Vegetable> getForFarmer(String authHeader) {
-        try{
+        try {
             String token = authHeader.substring(7);
 
             String userId = jwtUtil.extractUserId(token);
 
             boolean exist = vegetableRepository.existsByFarmerId(userId);
 
-            if(!exist)
+            if (!exist)
                 throw new RuntimeException("No vegetables found for this farmer.");
 
             return vegetableRepository.findByFarmerId(userId);
@@ -149,4 +162,6 @@ public class VegetableService {
             throw new RuntimeException(e);
         }
     }
+
+
 }

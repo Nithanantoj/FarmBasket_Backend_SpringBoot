@@ -12,6 +12,7 @@ public class Vegetable {
     private String name;
     private Double pricePerHalfKg;
     private Double availableQuantityKg;
+    private String imageUrl;
     private String farmerId; // Reference to User (Farmer)
 
     // Getters and Setters
@@ -34,6 +35,14 @@ public class Vegetable {
 
     public String getFarmerId() {
         return farmerId;
+    }
+
+    public String getImageUrl(){
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl){
+        this.imageUrl = imageUrl;
     }
 
     public void setFarmerId(String farmerId) {
