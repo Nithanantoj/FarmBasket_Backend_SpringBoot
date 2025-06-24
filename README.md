@@ -3,7 +3,7 @@
 ### ✅ 1. Postman Upload Check
 Successfully tested image upload with Postman.
 
-![Postman Upload](images\postman.png)
+![Postman Upload](images/postman.png)
 
 ---
 
