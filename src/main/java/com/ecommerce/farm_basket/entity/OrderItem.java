@@ -42,4 +42,12 @@ public class OrderItem {
     public void setName(String name) {
         this.name = name;
     }
+
+    public Double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public String getName() {
+        return name;
+    }
 }

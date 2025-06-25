@@ -32,7 +32,7 @@ public class SecurityConfig {
 
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/login").permitAll() // ✅ This will allow only the root "/" route publicly
+                        .requestMatchers("/api/login","/api/register").permitAll() // ✅ This will allow only the root "/" route publicly
                         .requestMatchers("/user/**", "/api/vegetables/get", "/api/order/**").hasAnyRole("customer", "farmer") // ✅ Role-based
                         .requestMatchers("/api/vegetables/farmer/**").hasRole("farmer")              // ✅ Role-based
                         .anyRequest().authenticated()
